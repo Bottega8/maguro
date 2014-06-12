@@ -36,6 +36,8 @@ append_file ".gitignore" do
 END
 end
 
+database_name = @app_name.gsub('-','_')
+
 # create a new database.yml that works with PG.
 create_file "config/database.sample.yml" do
 <<END
@@ -49,18 +51,18 @@ default: &default
 
 development:
   <<: *default
-  database: #{@app_name}_dev
+  database: #{database_name}_dev
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: #{@app_name}_test
+  database: #{database_name}_test
 
 production:
   <<: *default
-  database: #{@app_name}_prod
+  database: #{database_name}_prod
 
 END
 end
