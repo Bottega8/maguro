@@ -67,3 +67,11 @@ end
 
 remove_file "config/database.yml"
 run "cp config/database.sample.yml config/database.yml"
+
+# create new README file
+remove_file "README.rdoc"
+create_file "README.md" do
+<<END
+# #{@app_name}
+END
+end
