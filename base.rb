@@ -77,3 +77,65 @@ create_file "README.md" do
 # #{@app_name}
 END
 end
+
+
+=begin
+
+heroku commands:
+
+====== creating a new heroku app:
+mkdir example
+cd example
+git init
+heroku apps:create
+
+
+heroku apps:create
+===== set up heroku remotes from git
+https://devcenter.heroku.com/articles/multiple-environments
+heroku create --remote staging
+heroku create --remote production
+
+
+-------------
+
+#have to do git init first.
+git init. then do intial checkin.
+
+heroku apps:create bottega8-<app name> -remote production
+heroku apps:create bottega8-<app name>-staging -remote staging
+
+
+-------------
+
+#### WHY SHOULD YOU DEPLOY TO HEROKU EARLY AND OFTEN??
+because if you can run into production problems and its harder to figure out what is causing the issue when
+you've made a ton of changes.
+https://devcenter.heroku.com/articles/getting-started-with-rails4
+
+# use the 12factor gem for heroku
+gem 'rails_12factor', group: :production
+
+-------------
+
+### app environment variables
+app_environment_variables.rb
+(add variables here)
+then add to git ignore.
+also probably create an example file for this like the database.yml file.
+
+add these lines to config/environment.rb (like edunami)
+# Load the app's custom environment variables here, so that they are loaded before environments/*.rb
+app_environment_variables = File.join(Rails.root, 'config', 'app_environment_variables.rb')
+load(app_environment_variables) if File.exists?(app_environment_variables)
+
+
+-----------
+Setting up poltergist
+https://github.com/teampoltergeist/poltergeist
+
+in the rails-setup/ rspec setup file
+require 'capybara/poltergeist'
+Capybara.javascript_driver = :poltergeist
+
+=end
