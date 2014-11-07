@@ -102,7 +102,51 @@ module Maguro
       project.remove_file "README.rdoc"
       project.create_file "README.md" do
         <<-END.strip_heredoc
-        # #{app_name}
+# #{app_name}
+
+## Setup
+
+### Requirements
+
+1. [ruby](https://www.ruby-lang.org/en/)
+2. [postgres](http://www.postgresql.org/download/) (can be installed via homebrew)
+
+
+### Recommended (If using a mac these are required / HIGHLY recommended)
+
+1. [rvm](https://rvm.io/)
+2. [homebrew](http://brew.sh/)
+
+### Initialization Steps
+
+0. Make sure your computer is set up for Ruby on Rails development and you have pulled the code
+
+1. Make your own copy of database.yml `cp ./config/database.sample.yml ./config/database.yml`
+2. Configure your database.yml. If you have a default setup you shouldn't have to do anything.
+3. Make your own copy of app_environment_variables.rb `cp config/app_environment_variables.sample.rb config/app_environment_variables.rb`
+4. Install PostgreSQL `brew install postgresql`
+5. Make sure postgresql is running
+6. Use Rails #{Maguro::RUBY_VERSION} `rvm use #{Maguro::RUBY_VERSION}`
+7. `bundle install`
+8. `rake db:create db:migrate db:seed`
+9. Run tests to make sure they pass `rspec spec/`
+10. `rails s`
+
+### Updates
+
+Occasionally you will have to update your app / database based off of someone else's changes.
+Easiest is to do the following:
+
+1. `bundle install`
+2. `rake db:drop db:create db:migrate db:seed`
+
+## Testing
+
+To run all the tests run: `rspec`
+
+We have guard set up, so you can have guard automatically run your tests as you develop. To
+ start guard run: `guard`. To quit enter `quit` in the guard prompt.
+
 
         END
       end
