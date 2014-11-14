@@ -14,15 +14,6 @@ module Maguro
       gemfile.remove(/\n{2,}/, "\n")              #remove excess whitespace
     end
 
-    def remove_turbo_links
-      # remove turbolinks
-      project.gsub_file "Gemfile", /gem 'turbolinks'[\r\n]/, ""
-
-      # remove other code related to turbolinks
-      project.gsub_file "app/views/layouts/application.html.erb", /, ('|")data-turbolinks-track('|") => true/, ""
-      project.gsub_file "app/assets/javascripts/application.js", /\/\/= require turbolinks[\r\n]/, ""
-    end
-
     def add_ruby_version
       #add ruby version
       project.insert_into_file "Gemfile", "ruby '#{Maguro::RUBY_VERSION}'\n", after: "source 'https://rubygems.org'\n"
@@ -31,6 +22,20 @@ module Maguro
     def use_pg
       project.gsub_file "Gemfile", /gem 'sqlite3'[\r\n]/, ""    # remove sqlite
       project.gem 'pg'          # add new gems.
+    end
+
+    def use_12_factor_gem
+      # For heroku
+      project.gem 'rails_12factor', group: :production
+    end
+
+    def remove_turbo_links
+      # remove turbolinks
+      project.gsub_file "Gemfile", /gem 'turbolinks'[\r\n]/, ""
+
+      # remove other code related to turbolinks
+      project.gsub_file "app/views/layouts/application.html.erb", /, ('|")data-turbolinks-track('|") => true/, ""
+      project.gsub_file "app/assets/javascripts/application.js", /\/\/= require turbolinks[\r\n]/, ""
     end
 
     def add_test_gems
@@ -246,25 +251,52 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       end
     end
 
-    def add_12_factor_gem
-      # For heroku
-      project.gem 'rails_12factor', group: :production
+    def springify
+      project.run "bundle install"
+      project.run "bundle exec spring binstub --all"
     end
 
     def run_all_updates
+
+      project.git :init
+      update_gitignore
+      commit 'Initial commit with updated .gitignore'
+
       clean_gemfile
-      remove_turbo_links
       use_pg
+      use_12_factor_gem
       add_test_gems
       add_ruby_version
-      install_rspec
-      update_gitignore
+      commit 'add gems'
+
+      remove_turbo_links
+      commit 'remove turbolinks'
+
+
       create_database_sample
+      commit 'add database.sample file'
       create_readme
+      commit 'add readme'
+      create_app_env_var_sample
+      commit 'add app environment variable sample file'
+
+      install_rspec
+      commit 'install rspec'
+
       create_spec_folders
       update_rails_helper_spec
-      create_app_env_var_sample
-      add_12_factor_gem
+      commit 'customize rspec for basic usage'
+
+      springify
+      commit 'springify app'
+    end
+
+    private
+
+    def commit(message)
+      project.run "bundle install"
+      project.git add: '--all .'
+      project.git commit: "-m '#{message}'"
     end
   end
 end
