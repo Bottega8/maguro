@@ -244,7 +244,11 @@ app_environment_variables = File.join(Rails.root, 'config', 'app_environment_var
 load(app_environment_variables) if File.exists?(app_environment_variables)
         END
       end
+    end
 
+    def add_12_factor_gem
+      # For heroku
+      project.gem 'rails_12factor', group: :production
     end
 
     def run_all_updates
@@ -260,6 +264,7 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       create_spec_folders
       update_rails_helper_spec
       create_app_env_var_sample
+      add_12_factor_gem
     end
   end
 end
