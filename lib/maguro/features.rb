@@ -37,6 +37,21 @@ module Maguro
       project.gem_group :development, :test do
         gem 'awesome_print'
         gem 'rspec-rails'
+        gem 'capybara'
+        gem 'database_cleaner'
+        gem 'factory_girl_rails'
+        gem 'faker'
+        gem 'guard'
+        gem 'guard-bundler', require: false
+        gem 'guard-rspec', require: false
+        gem 'poltergeist'
+        gem 'pry'
+        gem 'rb-inotify', require: false
+        gem 'rb-fsevent', require: false
+        gem 'rb-fchange', require: false
+        gem 'rspec-rails'
+        gem 'rspec-collection_matchers'
+        gem 'shoulda-matchers'
       end
     end
 
@@ -152,6 +167,58 @@ We have guard set up, so you can have guard automatically run your tests as you 
       end
     end
 
+    def create_spec_folders
+      project.inside('spec') do
+        %w{support models features factories}.each do |folder|
+          project.run "mkdir #{folder}"
+          project.run "touch ./#{folder}/.keep"
+        end
+      end
+    end
+
+    def update_rails_helper_spec
+      file = 'spec/rails_helper.rb'
+
+      #add rspec requires and poltergeist configuration
+      project.insert_into_file file, after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
+        <<-END
+require 'rspec/collection_matchers'
+require 'capybara/rspec'
+require 'capybara/poltergeist'
+require 'database_cleaner'
+
+Capybara.javascript_driver = :poltergeist
+Capybara.default_wait_time = 5
+        END
+      end
+
+      #autoload all support files
+      project.gsub_file file, "# Dir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }", "Dir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }"
+
+      #make transactional fixtures false
+      project.gsub_file file, "config.use_transactional_fixtures = true", "config.use_transactional_fixtures = false"
+
+      #add database cleaner
+      project.insert_into_file file, after: "config.infer_spec_type_from_file_location!\n" do
+        <<-END
+
+
+  # Configure standard database cleaner. Use truncation instead of transactions.
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.before(:each) do |example|
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+        END
+      end
+    end
 
     def run_all_updates
       clean_gemfile
@@ -163,6 +230,8 @@ We have guard set up, so you can have guard automatically run your tests as you 
       update_gitignore
       create_database_sample
       create_readme
+      create_spec_folders
+      update_rails_helper_spec
     end
   end
 end
