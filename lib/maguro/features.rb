@@ -68,6 +68,7 @@ module Maguro
         <<-END.strip_heredoc
 
         /config/database.yml
+        /config/app_environment_variables.rb
         .DS_Store
         .idea
         END
@@ -220,6 +221,32 @@ Capybara.default_wait_time = 5
       end
     end
 
+    def create_app_env_var_sample
+      # create sample of app_environment_variables file
+      project.create_file "config/app_environment_variables.sample.rb" do
+        <<-END
+# Add secret app environment variables in this file.
+# You will also have to add these environment variables to heroku
+# Make a copy of the .sample file but DON'T check it in! Only the sample should be checked in.
+# ENV['MY_SAMPLE_SECRET'] = 'MYSECRETKEY'
+        END
+      end
+
+      # make local copy of app_environment_variables file
+      project.run "cp config/app_environment_variables.sample.rb config/app_environment_variables.rb"
+
+      # autoload environment variables into rails project
+      project.insert_into_file "config/environment.rb", after: "require File.expand_path('../application', __FILE__)\n" do
+        <<-END
+
+# Load the app's custom environment variables here, so that they are loaded before environments/*.rb
+app_environment_variables = File.join(Rails.root, 'config', 'app_environment_variables.rb')
+load(app_environment_variables) if File.exists?(app_environment_variables)
+        END
+      end
+
+    end
+
     def run_all_updates
       clean_gemfile
       remove_turbo_links
@@ -232,6 +259,7 @@ Capybara.default_wait_time = 5
       create_readme
       create_spec_folders
       update_rails_helper_spec
+      create_app_env_var_sample
     end
   end
 end
