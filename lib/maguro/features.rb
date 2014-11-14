@@ -1,12 +1,13 @@
 module Maguro
 
   class Features
-    attr_reader :project, :gemfile, :app_name
+    attr_reader :project, :gemfile, :app_name, :heroku
 
     def initialize(new_project)
       @project = new_project
       @app_name = @project.send(:app_name)
       @gemfile = Maguro::Gemfile.new(new_project)
+      @heroku = Maguro::Heroku.new(new_project, app_name)
     end
 
     def clean_gemfile
@@ -295,6 +296,8 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       commit 'springify app'
 
       checkout_develop_branch
+
+      heroku.create
     end
 
     private
