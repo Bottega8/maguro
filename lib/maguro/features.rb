@@ -256,6 +256,10 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       project.run "bundle exec spring binstub --all"
     end
 
+    def checkout_develop_branch
+      project.git checkout: '-b develop'
+    end
+
     def run_all_updates
 
       project.git :init
@@ -289,6 +293,8 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
 
       springify
       commit 'springify app'
+
+      checkout_develop_branch
     end
 
     private
