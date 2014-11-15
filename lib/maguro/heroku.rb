@@ -5,7 +5,7 @@ module Maguro
 
     def initialize(project, app_name)
       @project = project
-      @app_name = app_name.gsub('_','-')
+      @app_name = app_name.gsub(/[_ ]/,'-')
     end
 
     def create_staging

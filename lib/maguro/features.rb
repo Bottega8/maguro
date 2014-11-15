@@ -298,6 +298,7 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       checkout_develop_branch
 
       heroku.create
+      setup_bitbucket
     end
 
     private
@@ -306,6 +307,16 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       project.run "bundle install"
       project.git add: '--all .'
       project.git commit: "-m '#{message}'"
+    end
+
+    def setup_bitbucket
+      clean_app_name = app_name.gsub(/[- ]/, '_')
+      bitbucket = Maguro::Bitbucket.new(clean_app_name)
+      repo = bitbucket.create_repo
+      repo_git_url = bitbucket.repo_git_url
+
+      project.git remote: "add origin #{repo_git_url}"
+      project.git push: "-u origin --all"
     end
   end
 end
