@@ -1,13 +1,12 @@
 module Maguro
 
   class Features
-    attr_reader :project, :gemfile, :app_name, :heroku
+    attr_reader :project, :gemfile, :app_name
 
     def initialize(new_project)
       @project = new_project
       @app_name = @project.send(:app_name)
       @gemfile = Maguro::Gemfile.new(new_project)
-      @heroku = Maguro::Heroku.new(new_project, app_name)
     end
 
     def clean_gemfile
@@ -297,8 +296,8 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
 
       checkout_develop_branch
 
-      heroku.create
-      setup_bitbucket
+      setup_heroku if project.yes?('Setup heroku?')
+      setup_bitbucket if project.yes?('Setup bitbucket repo?')
     end
 
     private
@@ -307,6 +306,11 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       project.run "bundle install"
       project.git add: '--all .'
       project.git commit: "-m '#{message}'"
+    end
+
+    def setup_heroku
+      heroku = Maguro::Heroku.new(project, app_name)
+      heroku.create
     end
 
     def setup_bitbucket

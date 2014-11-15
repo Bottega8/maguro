@@ -22,3 +22,7 @@ Configurations include:
 5. Create file for app environment variables
 6. Create a basic readme
 
+Optional:
+
+1. Create a production and staging heroku application
+2. Create a remote repo on bitbucket and push to it
