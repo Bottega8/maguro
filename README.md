@@ -1,6 +1,15 @@
 
 ## Rails Application Templates for Bottega8
 
+
+### Setup
+
+Configure create a `config.yaml` file. Use `config.sample.yaml` as an example.
+ Set username, password, and owner. Owner is the organization if you have one, or the
+ same as the username (i think)
+
+If you want to create heroku projects, make sure you have the heroku toolbelt installed.
+
 ### Usage
 
 run: `rails new blog -m ./path/to/template.rb`
@@ -21,6 +30,7 @@ Configurations include:
 4. Set up some basic config stuff
 5. Create file for app environment variables
 6. Create a basic readme
+7. Create's a separate develop branch.
 
 Optional:
 

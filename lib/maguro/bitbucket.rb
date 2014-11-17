@@ -9,9 +9,12 @@ module Maguro
 
     def initialize(app_name)
       @app_name = app_name
-      @owner = "bottega8"
 
-      data = YAML::load(File.open('config.yaml'))
+      config_file = File.expand_path('../../../config.yaml', __FILE__)
+      data = YAML::load(File.open(config_file))
+
+      @owner = data['owner']
+
       self.class.basic_auth data['username'], data['password']
       self.class.base_uri 'https://api.bitbucket.org/2.0'
     end
@@ -33,7 +36,6 @@ module Maguro
       }
 
       response = self.class.post("/repositories/#{owner}/#{app_name}", options)
-
       if response['error']
         puts response['error']
         raise "There was an error creating the app"
