@@ -4,7 +4,7 @@ Dir[File.join(File.dirname(__FILE__),'maguro', '*.rb')].each { |file| require fi
 module Maguro
 
   # Global configuration
-  RUBY_VERSION = '2.1.3'
+  RUBY_VERSION = '2.1.5'
   ORGANIZATION = "ORGANIZATION"
   
   ## Basic base template

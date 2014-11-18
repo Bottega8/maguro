@@ -7,9 +7,9 @@ Before running the Bottega8 Rails templates:
 1. Install the [Heroku toolbelt](https://toolbelt.heroku.com/)
 2. Create an account on BitBucket.org, and ensure you have access to Bottega8/maguro
 3. Switch to directory where new project will live. E.g. `cd ~/Desktop/projects`
-4. Use Bottega8's preferred version of Ruby: `rvm install ruby-2.1.3`
-5. `rvm use 2.1.3`
-6. `gem install rails`
+4. Use Bottega8's preferred version of Ruby: `rvm install ruby-2.1.5`
+5. `rvm use 2.1.5@rails418 --create`
+6. `gem install rails -v 4.1.8`
 7. `gem install httparty`
 8. Clone this repository `git clone https://bitbucket.org/bottega8/maguro $TMPDIR/maguro`
 9. Set the BitBucket organization where the project's git repoistory will be hosted
