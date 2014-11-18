@@ -12,11 +12,11 @@ module Maguro
     end
 
     def create_staging
-      project.run "heroku apps:create #{@organization}-#{app_name} --remote production"
+      project.run "heroku apps:create #{organization}-#{app_name} --remote production"
     end
 
     def create_production
-      project.run "heroku apps:create #{@organization}-#{app_name}-staging --remote staging"
+      project.run "heroku apps:create #{organization}-#{app_name}-staging --remote staging"
     end
 
     def create
