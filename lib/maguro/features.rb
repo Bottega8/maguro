@@ -10,6 +10,52 @@ module Maguro
       @organization = organization
     end
 
+    def run_all_updates
+
+      project.git :init
+      update_gitignore
+      commit 'Initial commit with updated .gitignore'
+
+      clean_gemfile
+      use_pg
+      use_12_factor_gem
+      add_test_gems
+      add_ruby_version
+      commit 'add gems'
+
+      remove_turbo_links
+      commit 'remove turbolinks'
+
+
+      create_database_sample
+      commit 'add database.sample file'
+      create_readme
+      commit 'add readme'
+      create_app_env_var_sample
+      commit 'add app environment variable sample file'
+
+      install_rspec
+      commit 'install rspec'
+
+      create_spec_folders
+      update_rails_helper_spec
+      commit 'customize rspec for basic usage'
+
+      springify
+      commit 'springify app'
+
+      checkout_develop_branch
+
+      # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
+      # TODO: Doug: Consider extending Thor::Actions(?) to get behavior simillar to project.run
+      unless project.options[:pretend]
+        setup_heroku if project.yes?('Setup Heroku (y/n)?')
+        setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')
+      end
+    end
+
+    private
+
     def clean_gemfile
       gemfile.remove(/# .*[\r\n]?/, "")           #remove comments
       gemfile.remove(/\n{2,}/, "\n")              #remove excess whitespace
@@ -260,53 +306,6 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
     def checkout_develop_branch
       project.git checkout: '-b develop'
     end
-
-    # TODO: Doug: make this function the only private member
-    def run_all_updates
-
-      project.git :init
-      update_gitignore
-      commit 'Initial commit with updated .gitignore'
-
-      clean_gemfile
-      use_pg
-      use_12_factor_gem
-      add_test_gems
-      add_ruby_version
-      commit 'add gems'
-
-      remove_turbo_links
-      commit 'remove turbolinks'
-
-
-      create_database_sample
-      commit 'add database.sample file'
-      create_readme
-      commit 'add readme'
-      create_app_env_var_sample
-      commit 'add app environment variable sample file'
-
-      install_rspec
-      commit 'install rspec'
-
-      create_spec_folders
-      update_rails_helper_spec
-      commit 'customize rspec for basic usage'
-
-      springify
-      commit 'springify app'
-
-      checkout_develop_branch
-
-      # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
-      # TODO: Doug: Consider extending Thor::Actions(?) to get behavior simillar to project.run
-      unless project.options[:pretend]
-        setup_heroku if project.yes?('Setup Heroku (y/n)?')
-        setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')
-      end
-    end
-
-    private
 
     def commit(message)
       project.run "bundle install"
