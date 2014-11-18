@@ -2,7 +2,6 @@ require 'HTTParty'
 require 'yaml'
 
 module Maguro
-  # TODO: subclass or extend Thor::Action?
   class Bitbucket
     include HTTParty
 

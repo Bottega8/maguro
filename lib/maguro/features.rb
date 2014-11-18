@@ -47,7 +47,6 @@ module Maguro
       checkout_develop_branch
 
       # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
-      # TODO: Doug: Consider extending Thor::Actions(?) to get behavior simillar to project.run
       unless project.options[:pretend]
         setup_heroku if project.yes?('Setup Heroku (y/n)?')
         setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')

@@ -1,12 +1,10 @@
 module Maguro
-  # TODO: subclass or extend Thor::Action?
   class Heroku
 
     attr_reader :project, :app_name, :organization
 
     def initialize(project, app_name, organization)
       @project = project
-      # TODO: Doug: DRY -- merge with clean_app_name
       @app_name = app_name.gsub(/[_ ]/,'-')
       @organization = organization
     end
