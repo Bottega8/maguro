@@ -2,22 +2,24 @@
 ## Rails Application Templates for Bottega8
 
 
-### Setup
-
-Configure create a `config.yaml` file. Use `config.sample.yaml` as an example.
- Set username, password, and owner. Owner is the organization if you have one, or the
- same as the username (i think)
-
-If you want to create heroku projects, make sure you have the heroku toolbelt installed.
-
 ### Usage
-
-run: `rails new blog -m ./path/to/template.rb`
+Before running the Bottega8 Rails templates:
+1. Install the [Heroku toolbelt](https://toolbelt.heroku.com/)
+2. Create an account on BitBucket.org, and ensure you have access to Bottega8/maguro
+3. Switch to directory where new project will live. E.g. `cd ~/Desktop/projects`
+4. Use Bottega8's preferred version of Ruby: `rvm install ruby-2.1.3`
+5. `rvm use 2.1.3`
+6. `gem install rails`
+7. `gem install httparty`
+8. Clone this repository `git clone https://bitbucket.org/bottega8/maguro $TMPDIR/maguro`
+9. Set the BitBucket organization where the project's git repoistory will be hosted
+`export ORGANIZATION=bottega8`
+10. Generate the new project: `rails new $APP_NAME -m $TEMPDIR/template.rb`
 
 ### Manual testing
 
-testing: `rails new test_template -m ./template.rb`
-removing test template folder: `trash -rf test_template`
+testing: `rails new test_template -m $TEMPDIR/template.rb`
+removing test template folder: `rm -rf test_template`
 
 ### template.rb
 

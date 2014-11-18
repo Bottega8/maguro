@@ -1,12 +1,13 @@
 module Maguro
 
   class Features
-    attr_reader :project, :gemfile, :app_name
+    attr_reader :project, :gemfile, :app_name, :organization
 
-    def initialize(new_project)
+    def initialize(new_project, organization)
       @project = new_project
       @app_name = @project.send(:app_name)
       @gemfile = Maguro::Gemfile.new(new_project)
+      @organization = organization
     end
 
     def clean_gemfile
@@ -260,6 +261,7 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       project.git checkout: '-b develop'
     end
 
+    # TODO: Doug: make this function the only private member
     def run_all_updates
 
       project.git :init
@@ -296,8 +298,12 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
 
       checkout_develop_branch
 
-      setup_heroku if project.yes?('Setup heroku?')
-      setup_bitbucket if project.yes?('Setup bitbucket repo?')
+      # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
+      # TODO: Doug: Consider extending Thor::Actions(?) to get behavior simillar to project.run
+      unless project.options[:pretend]
+        setup_heroku if project.yes?('Setup Heroku (y/n)?')
+        setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')
+      end
     end
 
     private
@@ -309,13 +315,13 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
     end
 
     def setup_heroku
-      heroku = Maguro::Heroku.new(project, app_name)
+      heroku = Maguro::Heroku.new(@project, @app_name, @organization)
       heroku.create
     end
 
     def setup_bitbucket
-      clean_app_name = app_name.gsub(/[- ]/, '_')
-      bitbucket = Maguro::Bitbucket.new(clean_app_name)
+      clean_app_name = @app_name.gsub(/[- ]/, '_')
+      bitbucket = Maguro::Bitbucket.new(clean_app_name, @organization)
       repo = bitbucket.create_repo
       repo_git_url = bitbucket.repo_git_url
 

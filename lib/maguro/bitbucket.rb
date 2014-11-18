@@ -2,25 +2,34 @@ require 'HTTParty'
 require 'yaml'
 
 module Maguro
+  # TODO: subclass or extend Thor::Action?
   class Bitbucket
     include HTTParty
 
-    attr_reader :app_name, :owner
+    attr_reader :app_name, :organization
 
-    def initialize(app_name)
+    def initialize(app_name, organization)
       @app_name = app_name
 
-      config_file = File.expand_path('../../../config.yaml', __FILE__)
-      data = YAML::load(File.open(config_file))
+      @organization = organization
 
-      @owner = data['owner']
-
-      self.class.basic_auth data['username'], data['password']
+      # Retrieve username and password from the OS X keychain,
+      # via git's OS X credential manager
+      output = %x[printf protocol=https\\\\nhost=bitbucket.org\\\\n\\\\n  | git credential-osxkeychain get]
+      m = output.match("password=(.*)\n")
+      throw "Failed to retrieve password from git credential-osxkeychain" if m.nil?
+      password = m[1]
+      
+      m = output.match("username=(.*)\n")
+      throw "Failed to retrieve username from git credential-osxkeychain" if m.nil?
+      username = m[1]
+      
+      self.class.basic_auth username, password
       self.class.base_uri 'https://api.bitbucket.org/2.0'
     end
 
     def repo
-      @repo ||= self.class.get("/repositories/#{owner}/#{app_name}")
+      @repo ||= self.class.get("/repositories/#{organization}/#{app_name}")
     end
 
     def create_repo
@@ -35,10 +44,11 @@ module Maguro
           headers: { 'Content-Type' => 'application/json' }
       }
 
-      response = self.class.post("/repositories/#{owner}/#{app_name}", options)
+      path = "/repositories/#{organization}/#{app_name}"
+      response = self.class.post(path, options)
       if response['error']
         puts response['error']
-        raise "There was an error creating the app"
+        raise "There was an error creating the app."
       else
         repo
       end
@@ -50,7 +60,7 @@ module Maguro
 
     def delete_repo
       if app_name == 'test_app'
-        self.class.delete("/repositories/#{owner}/test_app")
+        self.class.delete("/repositories/#{organization}/test_app")
       else
         raise "Only allowed to deleted test_app. Mainly to clean up testing only."
       end
