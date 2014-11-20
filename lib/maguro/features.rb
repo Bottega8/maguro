@@ -1,3 +1,4 @@
+require 'byebug'
 module Maguro
 
   class Features
@@ -15,6 +16,8 @@ module Maguro
       project.git :init
       update_gitignore
       commit 'Initial commit with updated .gitignore'
+
+      create_rvm_files
 
       clean_gemfile
       use_pg
@@ -54,6 +57,20 @@ module Maguro
     end
 
     private
+
+    def create_rvm_files
+      project.create_file ".ruby-version" do 
+        <<-END.strip_heredoc
+        #{Maguro::RUBY_VERSION}
+        END
+      end
+      
+      project.create_file ".ruby-gemset" do
+        <<-END.strip_heredoc
+        #{app_name}
+        END
+      end
+    end
 
     def clean_gemfile
       gemfile.remove(/# .*[\r\n]?/, "")           #remove comments
