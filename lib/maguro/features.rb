@@ -319,11 +319,9 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
 
     def setup_bitbucket
       clean_app_name = app_name.gsub(/[- ]/, '_')
-      bitbucket = Maguro::Bitbucket.new(clean_app_name, organization)
-      repo = bitbucket.create_repo
-      repo_git_url = bitbucket.repo_git_url
-
-      project.git remote: "add origin #{repo_git_url}"
+      bitbucket = Maguro::Bitbucket.new(project, clean_app_name, organization)
+      bitbucket.create_repo
+      project.git remote: "add origin #{bitbucket.git_url}"
       project.git push: "-u origin --all"
     end
   end
