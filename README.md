@@ -17,25 +17,23 @@ Before running the Bottega8 Rails templates:
 `export ORGANIZATION=bottega8` (If you are using your personal account, set $ORGANIZATION to your username.)
 1. Generate the new project: `rails new $APP_NAME -m $TEMPDIR/template.rb`
 
-### Manual testing
+### What does the template do?
 
-testing: `rails new test_template -m $TEMPDIR/template.rb`
-removing test template folder: `rm -rf test_template`
+The Maguro project's `template.rb` will create a basic Rails project that is optimized for Bottega8's workflow by:
 
-### template.rb
+1. Saving RVM configuration files
+1. Creating a basic README.md
+1. Setting up local git repository, gitinit file, and development branch
+1. Generating app_environment_variables.rb for custom environment variables
+1. Removing Turbolinks
+1. Including RSpec, capybara, database_cleaner, factory_girl, and other gems for testing
+1. Using PostgreSQL as the database and generating database.yml
+1. Optionally, creating Heroku applications for staging and production environments
+1. Optionally, creating a Git repository on BitBucket.org, and pushing the newly-created Rails project to it
+1. Optionally, securely storing BitBucket.org credentials in the OS X keychain for convenience
+ 
+### Testing the template
+The template can be testing by running its test specs:
+1. `rspec`
+1. Clean up after the test by running: `rm -rf ???`
 
-The Maguro `template.rb` will create a basic Rails project that is optimized for Bottega8's workflow. Th
-Configurations include:
-
-1. Remove Turbolinks
-1. Use Postgres
-1. Use and Configure Rspec + other testing gems
-1. Set up some basic config stuff
-1. Create file for app environment variables
-1. Create a basic readme
-1. Create a separate develop branch.
-
-Optional:
-
-1. Create a production and staging heroku application
-1. Create a remote repo on bitbucket and push to it

@@ -110,7 +110,6 @@ module Maguro
     def add_test_gems
       project.gem_group :development, :test do
         gem 'awesome_print'
-        gem 'rspec-rails'
         gem 'capybara'
         gem 'database_cleaner'
         gem 'factory_girl_rails'
