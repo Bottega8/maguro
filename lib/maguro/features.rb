@@ -1,4 +1,3 @@
-require 'byebug'
 module Maguro
 
   class Features
