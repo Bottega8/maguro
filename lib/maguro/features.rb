@@ -12,6 +12,18 @@ module Maguro
 
     def run_all_updates
 
+      #
+      # Get user input at close to as possible to the invocation of 'rails new', while
+      # the user's attention is still captured. Also, running this early 
+      # makes debugging more convenient
+      #
+      # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
+      #
+      unless project.options[:pretend]
+        setup_heroku if project.yes?('Setup Heroku (y/n)?')
+        setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')
+      end
+
       project.git :init
       update_gitignore
       commit 'Initial commit with updated .gitignore'
@@ -48,11 +60,6 @@ module Maguro
 
       checkout_develop_branch
 
-      # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
-      unless project.options[:pretend]
-        setup_heroku if project.yes?('Setup Heroku (y/n)?')
-        setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')
-      end
     end
 
     private

@@ -11,6 +11,7 @@ module Maguro
     public
     attr_reader :project, :app_name, :organization
 
+    BITBUCKET = "bitbucket.org"
     API_BASE = "https://api.bitbucket.org/2.0"
     
     def initialize(project, app_name, organization)
@@ -58,20 +59,31 @@ module Maguro
     def bitbucket_api(path, method, options = {})
       puts "Making request to API at: #{path} via #{method} with options: #{options}"
 
-      # First, try to read the username and password from the OS X Keychain
-      if username.nil? && password.nil?
-        output = %x[printf protocol=https\\\\nhost=bitbucket.org\\\\n\\\\n  | git credential-osxkeychain get]
-        m = output.match("password=(.*)\n")
-        self.password = m[1] if !m.nil?
-        m = output.match("username=(.*)\n")
-        self.username = m[1] if !m.nil?
+      # TODO: Doug: do we want to enable this?
+      # First, try to read the username and password from the OS X Keychain,
+      # as stored by git credential-oskeychain
+      # if username.nil? || password.nil?
+      #   output = %x[printf protocol=https\\\\nhost=#{BITBUCKET}\\\\n\\\\n  | git credential-osxkeychain get]
+      #   m = output.match("password=(.*)\n")
+      #   self.password = m[1] if !m.nil?
+      #   m = output.match("username=(.*)\n")
+      #   self.username = m[1] if !m.nil?
+      # end
+      
+      # Try to retrieve username and password directly from the OS X Keychain
+      did_get_password_from_keychain = false
+      if username.nil? || password.nil?
+        credentials = Keychain.retrieve_account(BITBUCKET)
+        if !credentials.nil?
+          self.username = credentials[:username]
+          self.password = credentials[:password]
+          did_get_password_from_keychain = true
+        end
       end
-
-      # password = nil
-      # username = nil
 
       tries = 0
       response = nil
+      should_store_in_keychain = false
 
       loop do
 
@@ -81,13 +93,18 @@ module Maguro
           
           # Prompt the user for password
           puts ""
-          puts ""
           self.username = project.ask "What is your BitBucket username?"
           puts ""
           # password = $stdin.noecho do
           #   ask "BitBucket password?"
           # end
           self.password = project.ask "What is your BitBucket password?", :echo => false
+          puts ""
+          puts ""
+
+          if did_get_password_from_keychain || (project.yes? "Do you want to store this BitBucket login info into the Keychain? (y/n)")
+            should_store_in_keychain = true 
+          end
           puts ""
         end
 
@@ -100,12 +117,16 @@ module Maguro
           request["content-type"] = "application/json"
           request.body = options.to_json
         end
+
         request.basic_auth username, password
 
         response = http.request(request)
   
         response_code = response.code.to_i
-        return response if response_code == 200  # Success
+        if response_code == 200  # Success
+          Keychain.add_account(BITBUCKET, username, password) if should_store_in_keychain
+          return response
+        end
 
         puts "Response code: #{response_code} message: #{response.message}"
         if !response.body.empty?
@@ -122,6 +143,12 @@ module Maguro
         if response_code == 401
           self.username = nil
           self.password = nil
+          
+          if did_get_password_from_keychain
+            # If we got credentials from the Keychain, and authentication fails,
+            # clear the credentials from the keychain
+            Keychain.delete_account(BITBUCKET)
+          end
         end
       end
   
