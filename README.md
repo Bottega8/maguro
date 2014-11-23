@@ -3,7 +3,9 @@
 
 
 ### Usage
+
 Before running the Bottega8 Rails templates:
+
 1. Install the [Heroku toolbelt](https://toolbelt.heroku.com/)
 1. Install the Ruby Version Manager http://rvm.io/rvm/install
 1. Create an account on BitBucket.org, and ensure you have access to Bottega8/maguro
@@ -33,7 +35,8 @@ The Maguro project's `template.rb` will create a basic Rails project that is opt
 1. Optionally, securely storing BitBucket.org credentials in the OS X keychain for convenience
  
 ### Testing the template
-The template can be testing by running its test specs:
-1. `rspec`
-1. Clean up after the test by running: `rm -rf ???`
 
+The template can be testing by running its test specs:
+
+1. `rspec`
+2. When prompted, enter your Bitbucket credentials
