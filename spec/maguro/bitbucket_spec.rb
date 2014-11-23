@@ -18,6 +18,7 @@ describe Maguro::Bitbucket do
       # expect(created_repo['name']).to eq 'test_app'
       #
       # #cleanup
+      # TODO: doug: reimplement delete_repo
       # bb.delete_repo
     end
   end
