@@ -6,6 +6,7 @@
 
 Before running the Bottega8 Rails templates:
 
+1. Install [PostgreSQL for OS X](http://www.postgresql.org/download/macosx/)
 1. Install the [Heroku toolbelt](https://toolbelt.heroku.com/)
 1. Install the Ruby Version Manager http://rvm.io/rvm/install
 1. Create an account on BitBucket.org, and ensure you have access to Bottega8/maguro
@@ -18,6 +19,8 @@ Before running the Bottega8 Rails templates:
 1. Set the BitBucket organization where the project's git repository will be hosted
 `export ORGANIZATION=bottega8` (If you are using your personal account, set $ORGANIZATION to your username.)
 1. Generate the new project: `rails new $APP_NAME -m $TEMPDIR/template.rb`
+1. Open config/database.yml and replace `username` with the same username when setting up Postgres
+1. Run `rake db:create db:migrate`
 
 ### What does the template do?
 
