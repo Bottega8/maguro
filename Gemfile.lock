@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    maguro (0.0.1)
+      thor (~> 0.19)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rake (10.3.2)
+    thor (0.19.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.6)
+  maguro!
+  rake

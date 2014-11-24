@@ -44,3 +44,11 @@ The template can be testing by running its test specs:
 
 1. `rspec`
 2. When prompted, enter your Bitbucket credentials
+
+### Development
+
+Running the new gem:
+
+Build: `gem build maguro.gemspec`
+Install: `gem install ./maguro-0.0.1.gem`
+Run: `maguro`
