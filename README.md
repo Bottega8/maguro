@@ -1,6 +1,7 @@
 
 ## Rails Application Templates for Bottega8
 
+![alt tag](maguro_sushi.jpg)
 
 ### Usage
 Before running the Bottega8 Rails templates:
