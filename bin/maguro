@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
-require "thor"
+require 'thor'
+require 'rails'
 
 class MaguroCLI < Thor
-  desc "hello NAME", "say hello to NAME"
-  def hello(name)
-    puts "Hello #{name}"
+  include Thor::Actions
+
+  desc "new APP", "creates a new rails project named APP"
+  def new(name)
+    template_path = File.expand_path("../../template.rb", __FILE__)
+    run "rails new #{name} -m #{template_path}"
   end
 end
 
