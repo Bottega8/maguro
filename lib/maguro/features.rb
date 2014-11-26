@@ -19,11 +19,17 @@ module Maguro
       #
       # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
       #
+      git_url = nil
       unless project.options[:pretend]
         setup_heroku if project.yes?('Setup Heroku (y/n)?')
-        setup_bitbucket if project.yes?('Setup BitBucket repo (y/n)?')
+        if project.yes?('Setup BitBucket repo (y/n)?')
+          git_url = setup_bitbucket
+        end
       end
 
+      # TODO: Doug: check return value of commands? What happens if commands fail?
+      # When git commands failed, the error is reported to the console, but the generator
+      # completes successfully
       project.git :init
       update_gitignore
       commit 'Initial commit with updated .gitignore'
@@ -57,6 +63,11 @@ module Maguro
 
       springify
       commit 'springify app'
+      
+      if !git_url.nil?
+        project.git remote: "add origin #{git_url}"
+        project.git push: "-u origin --all"
+      end
 
       checkout_develop_branch
 
@@ -343,8 +354,7 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       clean_app_name = app_name.gsub(/[- ]/, '_')
       bitbucket = Maguro::Bitbucket.new(project, clean_app_name, organization)
       bitbucket.create_repo
-      project.git remote: "add origin #{bitbucket.git_url}"
-      project.git push: "-u origin --all"
+      bitbucket.git_url   
     end
   end
 end

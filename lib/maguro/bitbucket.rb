@@ -30,7 +30,7 @@ module Maguro
         if response.code == "200"
           @git_url = JSON.parse(response.body)["links"]["clone"].find{|i| i["name"] == "https"}["href"]
         else
-          throw "Could not retrieve Git url for project #{app_name}"
+          raise "Could not retrieve Git url for project #{app_name}"
         end
       end
       @git_url
@@ -52,11 +52,32 @@ module Maguro
         # Success
         puts "Successfully created repository for #{app_name}"
       else
-        throw "Could not create Git repository for project #{app_name}"
+        raise "Could not create Git repository for project #{app_name}"
       end
     end
 
-    def bitbucket_api(path, method, options = {})
+    def delete_repo
+      path = "#{API_BASE}/repositories/#{organization}/#{app_name}"
+      success_code = 204
+      response = bitbucket_api(path, Net::HTTP::Delete, {}, success_code)
+      raise "Could not delete repository." if response.code != success_code.to_s
+      puts "Successfully deleted repository: '#{app_name}'"
+    end
+    
+    def get_repo
+      path = "#{API_BASE}/repositories/#{organization}/#{app_name}"
+      response = bitbucket_api(path, Net::HTTP::Get)
+
+      # Do not raise on error, so that this method can be used
+      # to query the existence of a repository
+      return nil if response.code != "200"
+
+      JSON.parse(response.body)
+    end
+    
+    
+    private
+    def bitbucket_api(path, method, options = {}, expected_http_code = 200)
       puts "Making request to API at: #{path} via #{method} with options: #{options}"
 
       # TODO: Doug: do we want to enable this?
@@ -123,7 +144,11 @@ module Maguro
         response = http.request(request)
   
         response_code = response.code.to_i
-        if response_code == 200  # Success
+        
+        # Most REST calls return HTTP 200 on success.
+        # Some calls return another status code on success,
+        # E.g. DELETE returns 204
+        if response_code == expected_http_code  # Success
           Keychain.add_account(BITBUCKET, username, password) if should_store_in_keychain
           return response
         end
