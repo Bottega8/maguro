@@ -30,7 +30,7 @@ module Maguro
         if response.code == "200"
           @git_url = JSON.parse(response.body)["links"]["clone"].find{|i| i["name"] == "https"}["href"]
         else
-          throw "Could not retrieve Git url for project #{app_name}"
+          raise "Could not retrieve Git url for project #{app_name}"
         end
       end
       @git_url
@@ -52,7 +52,7 @@ module Maguro
         # Success
         puts "Successfully created repository for #{app_name}"
       else
-        throw "Could not create Git repository for project #{app_name}"
+        raise "Could not create Git repository for project #{app_name}"
       end
     end
 
@@ -60,7 +60,7 @@ module Maguro
       path = "#{API_BASE}/repositories/#{organization}/#{app_name}"
       success_code = 204
       response = bitbucket_api(path, Net::HTTP::Delete, {}, success_code)
-      throw "Could not delete repository." if response.code != success_code.to_s
+      raise "Could not delete repository." if response.code != success_code.to_s
       puts "Successfully deleted repository: '#{app_name}'"
     end
     
@@ -68,7 +68,7 @@ module Maguro
       path = "#{API_BASE}/repositories/#{organization}/#{app_name}"
       response = bitbucket_api(path, Net::HTTP::Get)
 
-      # Do not throw on error, so that this method can be used
+      # Do not raise on error, so that this method can be used
       # to query the existence of a repository
       return nil if response.code != "200"
 
