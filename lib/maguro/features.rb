@@ -1,12 +1,12 @@
 module Maguro
 
   class Features
-    attr_reader :project, :gemfile, :app_name, :organization
+    attr_reader :builder, :gemfile, :app_name, :organization
 
-    def initialize(new_project, organization)
-      @project = new_project
-      @app_name = project.send(:app_name)
-      @gemfile = Maguro::Gemfile.new(new_project)
+    def initialize(builder, organization)
+      @builder = builder
+      @app_name = builder.send(:app_name)
+      @gemfile = Maguro::Gemfile.new(builder)
       @organization = organization
     end
 
@@ -20,9 +20,9 @@ module Maguro
       # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
       #
       git_url = nil
-      unless project.options[:pretend]
-        setup_heroku if project.yes?('Setup Heroku (y/n)?')
-        if project.yes?('Setup BitBucket repo (y/n)?')
+      unless builder.options[:pretend]
+        setup_heroku if builder.yes?('Setup Heroku (y/n)?')
+        if builder.yes?('Setup BitBucket repo (y/n)?')
           git_url = setup_bitbucket
         end
       end
@@ -30,7 +30,7 @@ module Maguro
       # TODO: Doug: check return value of commands? What happens if commands fail?
       # When git commands failed, the error is reported to the console, but the generator
       # completes successfully
-      project.git :init
+      builder.git :init
       update_gitignore
       commit 'Initial commit with updated .gitignore'
 
@@ -65,8 +65,8 @@ module Maguro
       commit 'springify app'
       
       if !git_url.nil?
-        project.git remote: "add origin #{git_url}"
-        project.git push: "-u origin --all"
+        builder.git remote: "add origin #{git_url}"
+        builder.git push: "-u origin --all"
       end
 
       checkout_develop_branch
@@ -76,13 +76,13 @@ module Maguro
     private
 
     def create_rvm_files
-      project.create_file ".ruby-version" do 
+      builder.create_file ".ruby-version" do
         <<-END.strip_heredoc
         #{Maguro::RUBY_VERSION}
         END
       end
       
-      project.create_file ".ruby-gemset" do
+      builder.create_file ".ruby-gemset" do
         <<-END.strip_heredoc
         #{app_name}
         END
@@ -96,30 +96,30 @@ module Maguro
 
     def add_ruby_version
       #add ruby version
-      project.insert_into_file "Gemfile", "ruby '#{Maguro::RUBY_VERSION}'\n", after: "source 'https://rubygems.org'\n"
+      builder.insert_into_file "Gemfile", "ruby '#{Maguro::RUBY_VERSION}'\n", after: "source 'https://rubygems.org'\n"
     end
 
     def use_pg
-      project.gsub_file "Gemfile", /gem 'sqlite3'[\r\n]/, ""    # remove sqlite
-      project.gem 'pg'          # add new gems.
+      builder.gsub_file "Gemfile", /gem 'sqlite3'[\r\n]/, ""    # remove sqlite
+      builder.gem 'pg'          # add new gems.
     end
 
     def use_12_factor_gem
       # For heroku
-      project.gem 'rails_12factor', group: :production
+      builder.gem 'rails_12factor', group: :production
     end
 
     def remove_turbo_links
       # remove turbolinks
-      project.gsub_file "Gemfile", /gem 'turbolinks'[\r\n]/, ""
+      builder.gsub_file "Gemfile", /gem 'turbolinks'[\r\n]/, ""
 
       # remove other code related to turbolinks
-      project.gsub_file "app/views/layouts/application.html.erb", /, ('|")data-turbolinks-track('|") => true/, ""
-      project.gsub_file "app/assets/javascripts/application.js", /\/\/= require turbolinks[\r\n]/, ""
+      builder.gsub_file "app/views/layouts/application.html.erb", /, ('|")data-turbolinks-track('|") => true/, ""
+      builder.gsub_file "app/assets/javascripts/application.js", /\/\/= require turbolinks[\r\n]/, ""
     end
 
     def add_test_gems
-      project.gem_group :development, :test do
+      builder.gem_group :development, :test do
         gem 'awesome_print'
         gem 'capybara'
         gem 'database_cleaner'
@@ -140,15 +140,15 @@ module Maguro
     end
 
     def install_rspec
-      project.run "bundle install"
-      project.generate "rspec:install"
-      project.remove_dir "test"
+      builder.run "bundle install"
+      builder.generate "rspec:install"
+      builder.remove_dir "test"
     end
 
 
     # Update gitignore file with common stuff that we use.
     def update_gitignore
-      project.append_file ".gitignore" do
+      builder.append_file ".gitignore" do
         <<-END.strip_heredoc
 
         /config/database.yml
@@ -164,7 +164,7 @@ module Maguro
 
       database_name = app_name.gsub('-','_')
 
-      project.create_file "config/database.sample.yml" do
+      builder.create_file "config/database.sample.yml" do
         <<-END.strip_heredoc
         default: &default
           adapter: postgresql
@@ -192,15 +192,15 @@ module Maguro
         END
       end
 
-      project.remove_file "config/database.yml"
-      project.run "cp config/database.sample.yml config/database.yml"
+      builder.remove_file "config/database.yml"
+      builder.run "cp config/database.sample.yml config/database.yml"
     end
 
 
     #create a README.md file
     def create_readme
-      project.remove_file "README.rdoc"
-      project.create_file "README.md" do
+      builder.remove_file "README.rdoc"
+      builder.create_file "README.md" do
         <<-END.strip_heredoc
 # #{app_name}
 
@@ -253,10 +253,10 @@ We have guard set up, so you can have guard automatically run your tests as you 
     end
 
     def create_spec_folders
-      project.inside('spec') do
+      builder.inside('spec') do
         %w{support models features factories}.each do |folder|
-          project.run "mkdir #{folder}"
-          project.run "touch ./#{folder}/.keep"
+          builder.run "mkdir #{folder}"
+          builder.run "touch ./#{folder}/.keep"
         end
       end
     end
@@ -265,7 +265,7 @@ We have guard set up, so you can have guard automatically run your tests as you 
       file = 'spec/rails_helper.rb'
 
       #add rspec requires and poltergeist configuration
-      project.insert_into_file file, after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
+      builder.insert_into_file file, after: "# Add additional requires below this line. Rails is not loaded until this point!\n" do
         <<-END
 require 'rspec/collection_matchers'
 require 'capybara/rspec'
@@ -278,13 +278,13 @@ Capybara.default_wait_time = 5
       end
 
       #autoload all support files
-      project.gsub_file file, "# Dir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }", "Dir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }"
+      builder.gsub_file file, "# Dir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }", "Dir[Rails.root.join(\"spec/support/**/*.rb\")].each { |f| require f }"
 
       #make transactional fixtures false
-      project.gsub_file file, "config.use_transactional_fixtures = true", "config.use_transactional_fixtures = false"
+      builder.gsub_file file, "config.use_transactional_fixtures = true", "config.use_transactional_fixtures = false"
 
       #add database cleaner
-      project.insert_into_file file, after: "config.infer_spec_type_from_file_location!\n" do
+      builder.insert_into_file file, after: "config.infer_spec_type_from_file_location!\n" do
         <<-END
 
 
@@ -307,7 +307,7 @@ Capybara.default_wait_time = 5
 
     def create_app_env_var_sample
       # create sample of app_environment_variables file
-      project.create_file "config/app_environment_variables.sample.rb" do
+      builder.create_file "config/app_environment_variables.sample.rb" do
         <<-END
 # Add secret app environment variables in this file.
 # You will also have to add these environment variables to heroku
@@ -317,10 +317,10 @@ Capybara.default_wait_time = 5
       end
 
       # make local copy of app_environment_variables file
-      project.run "cp config/app_environment_variables.sample.rb config/app_environment_variables.rb"
+      builder.run "cp config/app_environment_variables.sample.rb config/app_environment_variables.rb"
 
       # autoload environment variables into rails project
-      project.insert_into_file "config/environment.rb", after: "require File.expand_path('../application', __FILE__)\n" do
+      builder.insert_into_file "config/environment.rb", after: "require File.expand_path('../application', __FILE__)\n" do
         <<-END
 
 # Load the app's custom environment variables here, so that they are loaded before environments/*.rb
@@ -331,28 +331,28 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
     end
 
     def springify
-      project.run "bundle install"
-      project.run "bundle exec spring binstub --all"
+      builder.run "bundle install"
+      builder.run "bundle exec spring binstub --all"
     end
 
     def checkout_develop_branch
-      project.git checkout: '-b develop'
+      builder.git checkout: '-b develop'
     end
 
     def commit(message)
-      project.run "bundle install"
-      project.git add: '--all .'
-      project.git commit: "-m '#{message}'"
+      builder.run "bundle install"
+      builder.git add: '--all .'
+      builder.git commit: "-m '#{message}'"
     end
 
     def setup_heroku
-      heroku = Maguro::Heroku.new(project, app_name, organization)
+      heroku = Maguro::Heroku.new(builder, app_name, organization)
       heroku.create
     end
 
     def setup_bitbucket
       clean_app_name = app_name.gsub(/[- ]/, '_')
-      bitbucket = Maguro::Bitbucket.new(project, clean_app_name, organization)
+      bitbucket = Maguro::Bitbucket.new(builder, clean_app_name, organization)
       bitbucket.create_repo
       bitbucket.git_url   
     end

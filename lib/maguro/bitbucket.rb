@@ -9,13 +9,13 @@ module Maguro
     attr_accessor :username, :password
     
     public
-    attr_reader :project, :app_name, :organization
+    attr_reader :builder, :app_name, :organization
 
     BITBUCKET = "bitbucket.org"
     API_BASE = "https://api.bitbucket.org/2.0"
     
-    def initialize(project, app_name, organization)
-      @project = project
+    def initialize(builder, app_name, organization)
+      @builder = builder
       @app_name = app_name
       @organization = organization
       self.username = nil
@@ -114,16 +114,16 @@ module Maguro
           
           # Prompt the user for password
           puts ""
-          self.username = project.ask "What is your BitBucket username?"
+          self.username = builder.ask "What is your BitBucket username?"
           puts ""
           # password = $stdin.noecho do
           #   ask "BitBucket password?"
           # end
-          self.password = project.ask "What is your BitBucket password?", :echo => false
+          self.password = builder.ask "What is your BitBucket password?", :echo => false
           puts ""
           puts ""
 
-          if did_get_password_from_keychain || (project.yes? "Do you want to store this BitBucket login info into the Keychain? (y/n)")
+          if did_get_password_from_keychain || (builder.yes? "Do you want to store this BitBucket login info into the Keychain? (y/n)")
             should_store_in_keychain = true 
           end
           puts ""

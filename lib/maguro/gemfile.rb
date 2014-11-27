@@ -1,14 +1,14 @@
 module Maguro
   class Gemfile
-    attr_reader :project, :file_name
+    attr_reader :builder, :file_name
 
-    def initialize(app_generator)
-      @project = app_generator
+    def initialize(builder)
+      @builder = builder
       @file_name = "Gemfile"
     end
 
     def remove(regex, replacement)
-      project.gsub_file(file_name, regex, replacement)
+      builder.gsub_file(file_name, regex, replacement)
     end
   end
 end

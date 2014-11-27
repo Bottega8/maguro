@@ -15,8 +15,8 @@ module Maguro
   end
   
   ## Basic base template
-  def self.base_template(project)
-    features = Maguro::Features.new(project, organization)
+  def self.base_template(builder)
+    features = Maguro::Features.new(builder, organization)
     features.run_all_updates
   end
 end
