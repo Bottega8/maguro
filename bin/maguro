@@ -1,15 +1,8 @@
 #!/usr/bin/env ruby
-require 'thor'
-require 'rails'
 
-class MaguroCLI < Thor
-  include Thor::Actions
+# required to set our custom AppGenerator source_path to the Rail's AppGenerator
+# so it can find all default the template files.
+Maguro::AppGenerator.source_paths << Rails::Generators::AppGenerator.source_root
 
-  desc "new APP", "creates a new rails project named APP"
-  def new(name)
-    template_path = File.expand_path("../../template.rb", __FILE__)
-    run "rails new #{name} -m #{template_path}"
-  end
-end
-
-MaguroCLI.start(ARGV)
+#Start our custom CLI
+Maguro::Cli.start(ARGV)
