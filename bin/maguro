@@ -1,5 +1,13 @@
 #!/usr/bin/env ruby
 
+
+# read about this someplace on stackoverflow so that we cna run this file directly and debug
+# instead of having to rebuild and run the gem.
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'maguro'
+
 # required to set our custom AppGenerator source_path to the Rail's AppGenerator
 # so it can find all default the template files.
 Maguro::AppGenerator.source_paths << Rails::Generators::AppGenerator.source_root
