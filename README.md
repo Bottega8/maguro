@@ -3,23 +3,20 @@
 
 ![alt tag](http://hajimefurukawa.com/random/img/maguro_sushi.jpg)
 
-### Usage
+### Prerequisite
 
 Before running the Bottega8 Rails templates:
 
 1. Install [PostgreSQL for OS X](http://www.postgresql.org/download/macosx/)
 1. Install the [Heroku toolbelt](https://toolbelt.heroku.com/)
-1. Install the Ruby Version Manager http://rvm.io/rvm/install
-1. Create an account on BitBucket.org, and ensure you have access to Bottega8/maguro
+1. Install Ruby. We recommend using the [Ruby Version Manager](http://rvm.io/rvm/install)
+
+
+### Usage
+
 1. Switch to directory where new project will live. E.g. `cd ~/Desktop/projects`
-1. Set environment variable with app name `export APP_NAME=foobar`
-1. Set the version of Ruby `rvm install ruby-2.1.5`
-1. Create a gemset `rvm use 2.1.5@$APP_NAME --create`
-1. Install the latest version of rails `gem install rails`
-1. Clone this repository so the template will be available on your local machine `git clone https://bitbucket.org/bottega8/maguro $TMPDIR/maguro`
-1. Set the BitBucket organization where the project's git repository will be hosted
-`export ORGANIZATION=bottega8` (If you are using your personal account, set $ORGANIZATION to your username.)
-1. Generate the new project: `rails new $APP_NAME -m $TEMPDIR/template.rb`
+1. Install the maguro gem `gem install maguro`
+1. Generate the new project: `maguro new $APP_NAME`
 1. Open config/database.yml and replace `username` with the same username when setting up Postgres
 1. Run `rake db:create db:migrate`
 
@@ -51,4 +48,4 @@ Running the new gem:
 
 Build: `gem build maguro.gemspec`
 Install: `gem install ./maguro-0.0.1.gem`
-Run: `maguro`
+Run: `maguro new [APP_NAME]`
