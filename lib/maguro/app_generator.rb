@@ -4,6 +4,9 @@ require 'rails/generators/rails/app/app_generator'
 module Maguro
   class AppGenerator < Rails::Generators::AppGenerator
 
+    class_option :organization, :type => :string, :aliases => '-o',
+                 :desc => 'Pass in your organization name to be used by heroku and bitbucket'
+
     # Overriding Rails::Generators::AppGenerator#finish_template to also run our custom code.
     def finish_template
       invoke :maguro_customizations
