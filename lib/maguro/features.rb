@@ -12,13 +12,23 @@ module Maguro
 
     def run_all_updates
 
-      #
+      # TODO: Doug: check return value of commands? What happens if commands fail?
+      # When git commands failed, the error is reported to the console, but the generator
+      # completes successfully
+      builder.git :init
+      update_gitignore
+      commit 'Initial commit with updated .gitignore'
+
+
+
       # Get user input at close to as possible to the invocation of 'rails new', while
       # the user's attention is still captured. Also, running this early 
       # makes debugging more convenient
       #
       # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
       #
+      # NOTE: Heroku setup has to come after initial init for it to create the proper
+      # Git remotes.
       git_url = nil
       unless builder.options[:pretend]
         setup_heroku if builder.yes?('Setup Heroku (y/n)?')
@@ -27,15 +37,7 @@ module Maguro
         end
       end
 
-      # TODO: Doug: check return value of commands? What happens if commands fail?
-      # When git commands failed, the error is reported to the console, but the generator
-      # completes successfully
-      builder.git :init
-      update_gitignore
-      commit 'Initial commit with updated .gitignore'
-
       create_rvm_files
-
       clean_gemfile
       use_pg
       use_12_factor_gem
