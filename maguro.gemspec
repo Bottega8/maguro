@@ -7,11 +7,11 @@ require 'maguro'
 Gem::Specification.new do |spec|
   spec.name          = "maguro"
   spec.version       = Maguro::VERSION
-  spec.authors       = ["Haji Furukawa"]
+  spec.authors       = ["Bottega8"]
   spec.email         = ["haji@bottega8.com"]
   spec.summary       = %q{Bottega8's rails application template.}
   spec.description   = %q{Get stuff done faster.}
-  spec.homepage      = "http://www.bottega8.com"
+  spec.homepage      = "https://bitbucket.org/bottega8/maguro"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
