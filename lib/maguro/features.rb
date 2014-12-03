@@ -81,12 +81,6 @@ module Maguro
         #{Maguro::RUBY_VERSION}
         END
       end
-      
-      builder.create_file ".ruby-gemset" do
-        <<-END.strip_heredoc
-        #{app_name}
-        END
-      end
     end
 
     def clean_gemfile
