@@ -63,6 +63,9 @@ module Maguro
       update_rails_helper_spec
       commit 'customize rspec for basic usage'
 
+      add_homepage
+      commit 'add homepage'
+
       springify
       commit 'springify app'
       
@@ -324,6 +327,12 @@ app_environment_variables = File.join(Rails.root, 'config', 'app_environment_var
 load(app_environment_variables) if File.exists?(app_environment_variables)
         END
       end
+    end
+
+    def add_homepage
+      builder.route "root to: 'home#index'"
+      builder.copy_file "home_controller.rb", "app/controllers/home_controller.rb"
+      builder.copy_file "home_index.html.erb", "app/views/home/index.html.erb"
     end
 
     def springify

@@ -10,6 +10,8 @@ require 'maguro'
 
 # required to set our custom AppGenerator source_path to the Rail's AppGenerator
 # so it can find all default the template files.
+templates_root = File.expand_path(File.join("..", "templates"), File.dirname(__FILE__))
+Maguro::AppGenerator.source_root templates_root
 Maguro::AppGenerator.source_paths << Rails::Generators::AppGenerator.source_root
 
 #Start our custom CLI
