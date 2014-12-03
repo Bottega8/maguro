@@ -1,13 +1,14 @@
 module Maguro
 
   class Features
-    attr_reader :builder, :gemfile, :app_name, :organization
+    attr_reader :builder, :gemfile, :app_name, :organization, :heroku
 
     def initialize(builder, organization)
       @builder = builder
       @app_name = builder.send(:app_name)
       @gemfile = Maguro::Gemfile.new(builder)
       @organization = organization
+      @heroku = Maguro::Heroku.new(builder, app_name, organization)
     end
 
     def run_all_updates
@@ -30,8 +31,15 @@ module Maguro
       # NOTE: Heroku setup has to come after initial init for it to create the proper
       # Git remotes.
       git_url = nil
+      should_setup_heroku = false
       unless builder.options[:pretend]
-        setup_heroku if builder.yes?('Setup Heroku (y/n)?')
+
+        should_setup_heroku = builder.yes?('Setup Heroku (y/n)?')
+
+        if should_setup_heroku
+          heroku.create
+        end
+
         if builder.yes?('Setup BitBucket repo (y/n)?')
           git_url = setup_bitbucket
         end
@@ -47,7 +55,6 @@ module Maguro
 
       remove_turbo_links
       commit 'remove turbolinks'
-
 
       create_database_sample
       commit 'add database.sample file'
@@ -74,8 +81,11 @@ module Maguro
         builder.git push: "-u origin --all"
       end
 
-      checkout_develop_branch
+      if should_setup_heroku
+        heroku.push
+      end
 
+      checkout_develop_branch
     end
 
     private
@@ -348,11 +358,6 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       builder.run "bundle install"
       builder.git add: '--all .'
       builder.git commit: "-m '#{message}'"
-    end
-
-    def setup_heroku
-      heroku = Maguro::Heroku.new(builder, app_name, organization)
-      heroku.create
     end
 
     def setup_bitbucket
