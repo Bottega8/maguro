@@ -2,10 +2,6 @@ Dir[File.join(File.dirname(__FILE__),'maguro', '*.rb')].each { |file| require fi
 
 module Maguro
 
-  # Global configuration
-  RUBY_VERSION = '2.1.5'
-  RAILS_VERSION = '4.1.8'
-
   def self.organization
     @organization
   end

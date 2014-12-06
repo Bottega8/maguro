@@ -3,7 +3,16 @@
 
 ![alt tag](http://hajimefurukawa.com/random/img/maguro_sushi.jpg)
 
-### Prerequisite
+### Development steps
+To make local changes to this gem, clone this repository then:
+
+1. Build the gem `gem build maguro.gemspec`
+1. Switch to the directory where you want to create a new project. E.g. `cd ~/Desktop/projects`
+1. Install the gem `gem install ./maguro-0.0.1.gem`
+1. Follow instructions in the section `Gem Usage`, i.e. `maguro new [APP_NAME]`
+
+
+### Gem Prerequisites
 
 Before running the Bottega8 Rails templates:
 
@@ -12,7 +21,7 @@ Before running the Bottega8 Rails templates:
 1. Install Ruby. We recommend using the [Ruby Version Manager](http://rvm.io/rvm/install)
 
 
-### Usage
+### Gem Usage
 
 1. Switch to directory where new project will live. E.g. `cd ~/Desktop/projects`
 1. Install the maguro gem `gem install maguro`
@@ -41,11 +50,3 @@ The template can be testing by running its test specs:
 
 1. `rspec`
 2. When prompted, enter your Bitbucket credentials
-
-### Development
-
-Running the new gem:
-
-Build: `gem build maguro.gemspec`
-Install: `gem install ./maguro-0.0.1.gem`
-Run: `maguro new [APP_NAME]`
