@@ -3,9 +3,13 @@
 
 ![alt tag](http://hajimefurukawa.com/random/img/maguro_sushi.jpg)
 
-### Development steps
+### Development and testing steps
 To make local changes to this gem, clone this repository then:
 
+1. Clone this repository
+1. Run `bundle install` to install development dependencies
+1. Develop/modify the source code
+1. Run unit and integration tests with `rspec`
 1. Build the gem `gem build maguro.gemspec`
 1. Switch to the directory where you want to create a new project. E.g. `cd ~/Desktop/projects`
 1. Install the gem `gem install ./maguro-0.0.1.gem`
@@ -43,10 +47,3 @@ The Maguro project's `template.rb` will create a basic Rails project that is opt
 1. Optionally, creating Heroku applications for staging and production environments
 1. Optionally, creating a Git repository on BitBucket.org, and pushing the newly-created Rails project to it
 1. Optionally, securely storing BitBucket.org credentials in the OS X keychain for convenience
- 
-### Testing the template
-
-The template can be testing by running its test specs:
-
-1. `rspec`
-2. When prompted, enter your Bitbucket credentials

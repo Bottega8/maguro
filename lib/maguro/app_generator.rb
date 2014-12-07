@@ -39,10 +39,10 @@ module Maguro
         if yes?("Use saved organization, #{saved_organization} (y/n)?")
           Maguro.organization = saved_organization
         else
-          raise InvocationError, "Organization was not set. Please set organization with '-o ORGANIZATION'"
+          raise Thor::InvocationError, "Organization was not set. Please set organization with '-o ORGANIZATION'"
         end
       else
-        raise InvocationError, "Organization was not set. Please set organization with '-o ORGANIZATION'"
+        raise Thor::InvocationError, "Organization was not set. Please set organization with '-o ORGANIZATION'"
       end
     end
   end
