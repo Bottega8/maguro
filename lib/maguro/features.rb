@@ -62,6 +62,9 @@ module Maguro
       springify
       commit 'springify app'
 
+      setup_guard
+      commit 'add guard files'
+
       if !git_url.nil?
         builder.git remote: "add origin #{git_url}"
         builder.git push: "-u origin --all"
@@ -336,9 +339,15 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       builder.run "bundle exec spring binstub --all"
     end
 
+
+    def setup_guard
+      builder.run 'bundle exec guard init guard-bundler guard-rspec'
+    end
+
     def checkout_develop_branch
       builder.git checkout: '-b develop'
     end
+
 
     def commit(message)
       builder.run "bundle install"
