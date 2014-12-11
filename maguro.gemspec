@@ -6,7 +6,7 @@ require 'maguro/version'
 Gem::Specification.new do |spec|
   spec.name          = "maguro"
   spec.version       = Maguro::VERSION
-  spec.authors       = ["Bottega8"]
+  spec.authors       = ["Bottega8", "newyorkpizza"]
   spec.email         = ["haji@bottega8.com"]
   spec.summary       = %q{Bottega8's rails application template.}
   spec.description   = %q{Get stuff done faster.}
