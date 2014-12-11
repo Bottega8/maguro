@@ -20,29 +20,15 @@ module Maguro
       update_gitignore
       commit 'Initial commit with updated .gitignore'
 
-
-
-      # Get user input at close to as possible to the invocation of 'rails new', while
-      # the user's attention is still captured. Also, running this early 
-      # makes debugging more convenient
-      #
-      # Don't setup Heroku or BitBucket if user runs 'rails new' with '--pretend'
-      #
       # NOTE: Heroku setup has to come after initial init for it to create the proper
       # Git remotes.
+      if builder.options[:heroku]
+        heroku.create
+      end
+
       git_url = nil
-      should_setup_heroku = false
-      unless builder.options[:pretend]
-
-        should_setup_heroku = builder.yes?('Setup Heroku (y/n)?')
-
-        if should_setup_heroku
-          heroku.create
-        end
-
-        if builder.yes?('Setup BitBucket repo (y/n)?')
-          git_url = setup_bitbucket
-        end
+      if builder.options[:bitbucket]
+        git_url = setup_bitbucket
       end
 
       create_rvm_files
@@ -75,13 +61,13 @@ module Maguro
 
       springify
       commit 'springify app'
-      
+
       if !git_url.nil?
         builder.git remote: "add origin #{git_url}"
         builder.git push: "-u origin --all"
       end
 
-      if should_setup_heroku
+      if builder.options[:heroku]
         heroku.push
       end
 
