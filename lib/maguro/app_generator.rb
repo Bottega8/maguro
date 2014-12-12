@@ -4,14 +4,22 @@ require 'rails/generators/rails/app/app_generator'
 module Maguro
   class AppGenerator < Rails::Generators::AppGenerator
 
+
+
+    class_option :heroku, type: :boolean, aliases: '--hh',
+                 desc: 'Create a production and staging heroku application'
+
+    class_option :bitbucket, type: :boolean, aliases: '--bb',
+                 desc: 'Create a bitbucket project and push to it.'
+
     class_option :organization, type: :string, aliases: '-o',
                  desc: 'Pass in your organization name to be used by heroku and bitbucket'
 
-    class_option :heroku, type: :boolean,
-                 desc: 'Create a production and staging heroku application'
+    class_option :'database-username', type: :string, aliases: '--du',
+                 desc: 'Add a database username'
 
-    class_option :bitbucket, type: :boolean,
-                 desc: 'Create a bitbucket project and push to it.'
+    class_option :'database-password', type: :string, aliases: '--dp',
+                 desc: 'Add a database password'
 
     # Overriding Rails::Generators::AppGenerator#finish_template.
     # Allows maguro to do stuff before the default rails generator is run.

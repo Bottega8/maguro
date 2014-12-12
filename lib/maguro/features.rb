@@ -42,8 +42,8 @@ module Maguro
       remove_turbo_links
       commit 'remove turbolinks'
 
-      create_database_sample
-      commit 'add database.sample file'
+      create_database_files
+      commit 'add database.sample.yml and database.yml files'
       create_readme
       commit 'add readme'
       create_app_env_var_sample
@@ -73,6 +73,9 @@ module Maguro
       if builder.options[:heroku]
         heroku.push
       end
+
+      create_local_database
+      commit 'add blank schema file'
 
       checkout_develop_branch
     end
@@ -158,17 +161,26 @@ module Maguro
     end
 
     # create a new database.yml that works with PG.
-    def create_database_sample
+    def create_database_files
+      username = builder.options['database-username']
+      password = builder.options['database-password']
 
+      builder.remove_file "config/database.yml"
+      create_database_yml_file("config/database.sample.yml", "username", "pass")
+      create_database_yml_file("config/database.yml", username, password)
+    end
+
+    def create_database_yml_file(file_name, username, password)
       database_name = app_name.gsub('-','_')
 
-      builder.create_file "config/database.sample.yml" do
+      builder.create_file file_name do
         <<-END.strip_heredoc
         default: &default
           adapter: postgresql
           encoding: utf8
           host: localhost
-          username: username
+          username: #{username}
+          password: #{password}
           pool: 5
           timeout: 5000
 
@@ -190,8 +202,6 @@ module Maguro
         END
       end
 
-      builder.remove_file "config/database.yml"
-      builder.run "cp config/database.sample.yml config/database.yml"
     end
 
 
@@ -346,6 +356,13 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
 
     def checkout_develop_branch
       builder.git checkout: '-b develop'
+    end
+
+    def create_local_database
+      #create a local database if a database-username was passed
+      if builder.options['database-username']
+        builder.run 'rake db:create db:migrate'
+      end
     end
 
 
