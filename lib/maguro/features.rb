@@ -3,12 +3,12 @@ module Maguro
   class Features
     attr_reader :builder, :gemfile, :app_name, :organization, :heroku
 
-    def initialize(builder, organization)
+    def initialize(builder)
       @builder = builder
       @app_name = builder.send(:app_name)
+      @organization = builder.options[:organization]
       @gemfile = Maguro::Gemfile.new(builder)
-      @organization = organization
-      @heroku = Maguro::Heroku.new(builder, app_name, organization)
+      @heroku = Maguro::Heroku.new(builder, app_name, builder.options[:organization])
     end
 
     def run_all_updates

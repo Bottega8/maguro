@@ -43,7 +43,8 @@ module Maguro
     # Overriding Rails::Generators::AppGenerator#finish_template.
     # This will run our maguro customizations after all of the default rails customizations.
     def finish_template
-      Maguro.base_template(builder)
+      Maguro::Features.new(builder).run_all_updates
+
       super
     end
 
@@ -89,21 +90,18 @@ module Maguro
     KEYCHAIN_ORGANIZATION='organization'
 
     def set_organization
-      organization = options[:organization]
-
       saved_organization = Keychain.retrieve_account(KEYCHAIN_ORGANIZATION)
       saved_organization = saved_organization[:password] if saved_organization
 
-      if organization
-        Maguro.organization = organization
+      if options[:organization]
         org_output = saved_organization ? saved_organization : "<none>"
 
-        if yes?("Save organization '#{organization}' as default (y/n)? (current default: #{org_output})")
-          Keychain.add_account(KEYCHAIN_ORGANIZATION, KEYCHAIN_ORGANIZATION, organization)
+        if yes?("Save organization '#{options[:organization]}' as default (y/n)? (current default: #{org_output})")
+          Keychain.add_account(KEYCHAIN_ORGANIZATION, KEYCHAIN_ORGANIZATION, options[:organization])
         end
       elsif saved_organization
         if yes?("Use saved organization, #{saved_organization} (y/n)?")
-          Maguro.organization = saved_organization
+          options[:organization] = saved_organization
         else
           raise Thor::InvocationError, "Organization was not set. Please set organization with '-o ORGANIZATION'"
         end
