@@ -31,6 +31,10 @@ module Maguro
         git_url = setup_bitbucket
       end
 
+      if builder.options[:github]
+        setup_github
+      end
+
       create_rvm_files
       clean_gemfile
       use_pg
@@ -68,6 +72,10 @@ module Maguro
       if !git_url.nil?
         builder.git remote: "add origin #{git_url}"
         builder.git push: "-u origin --all"
+      end
+
+      if builder.options[:github]
+        builder.git push: '-u origin --all'
       end
 
       if builder.options[:heroku]
@@ -377,6 +385,12 @@ load(app_environment_variables) if File.exists?(app_environment_variables)
       bitbucket = Maguro::Bitbucket.new(builder, clean_app_name, organization)
       bitbucket.create_repo
       bitbucket.git_url   
+    end
+
+    def setup_github
+      clean_app_name = app_name.gsub(/[- ]/, '_')
+      github = Maguro::Github.new(builder, clean_app_name, organization)
+      github.create_repo
     end
   end
 end

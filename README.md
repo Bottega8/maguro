@@ -23,7 +23,12 @@ Before running the Bottega8 Rails templates:
 1. Install [PostgreSQL for OS X](http://www.postgresql.org/download/macosx/)
 1. Install the [Heroku toolbelt](https://toolbelt.heroku.com/)
 1. Install Ruby. We recommend using the [Ruby Version Manager](http://rvm.io/rvm/install)
+1. Install [Hub](https://github.com/github/hub) if you want to create an application on github.
 
+
+### Installing Prerequisites
+
+1. To install Hub: `brew install hub` assuming you have homebrew.
 
 ### Gem Usage
 
@@ -47,3 +52,5 @@ The Maguro project's `template.rb` will create a basic Rails project that is opt
 1. Optionally, creating Heroku applications for staging and production environments
 1. Optionally, creating a Git repository on BitBucket.org, and pushing the newly-created Rails project to it
 1. Optionally, securely storing BitBucket.org credentials in the OS X keychain for convenience
+1. Optionally, creating a Git repository on Github.com.
+

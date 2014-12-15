@@ -12,6 +12,9 @@ module Maguro
     class_option :bitbucket, type: :boolean, aliases: '--bb',
                  desc: 'Create a bitbucket project and push to it.'
 
+    class_option :github, type: :boolean, aliases: '--gh',
+                 desc: 'Create a github project and push to it.'
+
     class_option :organization, type: :string, aliases: '-o',
                  desc: 'Pass in your organization name to be used by heroku and bitbucket'
 
@@ -48,7 +51,7 @@ module Maguro
 
     def check_ruby_version
       if ::RUBY_VERSION != Maguro::RUBY_VERSION
-        raise "You are using ruby version #{::RUBY_VERSION}. Maguro requires  ruby version #{Maguro::RUBY_VERSION}. (e.g. rvm use #{Maguro::RUBY_VERSION})."
+        raise Thor::Error, "You are using ruby version #{::RUBY_VERSION}. Maguro requires ruby version #{Maguro::RUBY_VERSION}. (e.g. rvm use #{Maguro::RUBY_VERSION})."
       end
     end
 
@@ -58,6 +61,7 @@ module Maguro
       if options[:pretend]
         options[:heroku] = false
         options[:bitbucket] = false
+        options[:github] = false
       else
         # Prompt user if they haven't passed in a value for heroku, bitbucket options.
         if options[:heroku].nil?
@@ -66,10 +70,17 @@ module Maguro
         if options[:bitbucket].nil?
           options[:bitbucket] = builder.yes?('Setup BitBucket repo (y/n)?')
         end
+        if options[:github].nil?
+          options[:github] = builder.yes?('Setup Github repo (y/n)?')
+        end
+      end
+
+      if options[:bitbucket] && options[:github]
+        raise Thor::Error, "Can't set up both bitbucket and github :p. (Select one)"
       end
 
       # only worry about setting organization if we are using heroku or bitbucket
-      if options[:heroku] || options[:bitbucket]
+      if options[:heroku] || options[:bitbucket] || options[:github]
         set_organization
       end
     end
