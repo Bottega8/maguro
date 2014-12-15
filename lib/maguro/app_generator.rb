@@ -27,6 +27,8 @@ module Maguro
     def initialize(*args)
       super
 
+      check_ruby_version
+
       # Thor's option hash is frozen. Unfreeze so we can update our own variables on it.
       # Risk: Don't accidentally modify options you didn't mean to!
       self.options = options.dup
@@ -43,6 +45,12 @@ module Maguro
     end
 
     protected
+
+    def check_ruby_version
+      if ::RUBY_VERSION != Maguro::RUBY_VERSION
+        raise "You are using ruby version #{::RUBY_VERSION}. Maguro requires  ruby version #{Maguro::RUBY_VERSION}. (e.g. rvm use #{Maguro::RUBY_VERSION})."
+      end
+    end
 
     def set_custom_options
 
