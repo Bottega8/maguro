@@ -20,21 +20,6 @@ module Maguro
       update_gitignore
       commit 'Initial commit with updated .gitignore'
 
-      # NOTE: Heroku setup has to come after initial init for it to create the proper
-      # Git remotes.
-      if builder.options[:heroku]
-        heroku.create
-      end
-
-      git_url = nil
-      if builder.options[:bitbucket]
-        git_url = setup_bitbucket
-      end
-
-      if builder.options[:github]
-        setup_github
-      end
-
       create_rvm_files
       clean_gemfile
       use_pg
@@ -69,23 +54,31 @@ module Maguro
       setup_guard
       commit 'add guard files'
 
-      if !git_url.nil?
-        builder.git remote: "add origin #{git_url}"
-        builder.git push: "-u origin --all"
-      end
-
-      if builder.options[:github]
-        builder.git push: '-u origin --all'
-      end
-
-      if builder.options[:heroku]
-        heroku.push
-      end
-
       create_local_database
       commit 'add blank schema file'
 
       checkout_develop_branch
+
+      # NOTE: Heroku setup has to come after initial init for it to create the proper
+      # Git remotes.
+      if builder.options[:heroku]
+        heroku.create
+        heroku.push
+      end
+
+      if builder.options[:bitbucket]
+        git_url = setup_bitbucket
+
+        if !git_url.nil?
+          builder.git remote: "add origin #{git_url}"
+          builder.git push: "-u origin --all"
+        end
+      end
+
+      if builder.options[:github]
+        setup_github
+        builder.git push: '-u origin --all'
+      end
     end
 
     private
