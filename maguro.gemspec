@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["haji@bottega8.com"]
   spec.summary       = %q{Bottega8's rails application template.}
   spec.description   = %q{Get stuff done faster.}
-  spec.homepage      = "https://bitbucket.org/bottega8/maguro"
+  spec.homepage      = "https://github.com/Bottega8/maguro"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
