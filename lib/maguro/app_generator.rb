@@ -4,8 +4,6 @@ require 'rails/generators/rails/app/app_generator'
 module Maguro
   class AppGenerator < Rails::Generators::AppGenerator
 
-
-
     class_option :heroku, type: :boolean, aliases: '--hh',
                  desc: 'Create a production and staging heroku application'
 

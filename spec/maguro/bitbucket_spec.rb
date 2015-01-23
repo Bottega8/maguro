@@ -39,7 +39,6 @@ describe Maguro::Bitbucket do
       # Ensure that the repository has actually been deleted
       info = bitbucket.get_repo
       expect(info).to be_nil
-      
     end
   end
 
