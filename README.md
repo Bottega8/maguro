@@ -52,6 +52,7 @@ Create a new app:
 
 `maguro new $APP_NAME`
 
+
 ### Detailed Usage
 
 1. Switch to directory where new project will live. E.g. `cd ~/Desktop/projects`
@@ -60,6 +61,9 @@ Create a new app:
 1. Open config/database.yml and replace `username` with the same username when setting up Postgres
 1. Run `rake db:create db:migrate`
 
+### Options
+
+`maguro new --help` to see more options. 
 
 ## Development and testing steps
 
